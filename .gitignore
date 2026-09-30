@@ -3,3 +3,5 @@ node_modules/
 dist/
 data/*.sqlite
 .DS_Store
+.vercel
+.env*

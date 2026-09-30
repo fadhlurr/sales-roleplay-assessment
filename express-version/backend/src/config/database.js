@@ -1,5 +1,10 @@
 const path = require('path');
 const { Sequelize } = require('sequelize');
+// Sequelize me-require dialect driver secara dinamis (berdasarkan config.dialect
+// saat runtime), jadi bundler serverless (Vercel) tidak bisa melacaknya lewat
+// static analysis dan gagal menyertakan 'pg' di bundle. Require eksplisit di
+// sini supaya ikut ter-bundle.
+require('pg');
 
 // Prefer SALES_ROLEPLAY_DATABASE_URL over DATABASE_URL — nama generik seperti
 // DATABASE_URL gampang direbut service lain di platform yang sama. Kalau
