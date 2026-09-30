@@ -20,6 +20,10 @@ const sequelize = DATABASE_URL
       dialectOptions: isLocalDb
         ? {}
         : { ssl: { require: true, rejectUnauthorized: false } },
+      // Pool kecil — di serverless (Vercel) tiap invocation bisa buka pool
+      // sendiri-sendiri, jadi jangan sampai satu instance menghabiskan slot
+      // koneksi Neon. Connection string sudah lewat pooler Neon juga.
+      pool: { max: 2, min: 0, idle: 10000, acquire: 20000 },
     })
   : new Sequelize({ dialect: 'sqlite', storage: SQLITE_FILE, logging: false });
 
