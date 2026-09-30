@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
+import { useSlowHint } from '../hooks/useSlowHint';
 
 const TYPE_LABEL = {
   cold_call: 'Cold Call',
@@ -17,6 +18,7 @@ export default function ScenarioSelect() {
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const showSlowHint = useSlowHint(busy);
 
   useEffect(() => {
     api.scenarios(token).then(setScenarios).catch((err) => setError(err.message));
@@ -66,8 +68,14 @@ export default function ScenarioSelect() {
           <h2>Instruksi Skenario</h2>
           <p>{selected.instruction}</p>
           <button className="btn primary" onClick={startSession} disabled={busy}>
+            {busy && <span className="spinner" />}
             {busy ? 'Memulai...' : 'Mulai Simulasi'}
           </button>
+          {showSlowHint && (
+            <p className="slow-hint">
+              Server sedang bangun dari mode idle — bisa makan waktu 10–15 detik pada percobaan pertama. Mohon tunggu, jangan klik ulang.
+            </p>
+          )}
         </div>
       )}
     </div>

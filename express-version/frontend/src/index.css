@@ -139,3 +139,23 @@ tr.clickable:hover { background: #f9fafc; }
 
 .filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
 .filters select, .filters input { min-width: 160px; }
+
+.spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.btn:not(.primary) .spinner { border-color: var(--border); border-top-color: var(--text-muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.slow-hint {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

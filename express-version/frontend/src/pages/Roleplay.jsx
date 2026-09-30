@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
+import { useSlowHint } from '../hooks/useSlowHint';
 
 export default function Roleplay() {
   const { sessionId } = useParams();
@@ -15,6 +16,8 @@ export default function Roleplay() {
   const [completing, setCompleting] = useState(false);
   const [error, setError] = useState('');
   const chatRef = useRef(null);
+  const showSendHint = useSlowHint(sending, 4000);
+  const showCompleteHint = useSlowHint(completing, 4000);
 
   useEffect(() => {
     api.sessionDetail(token, sessionId).then((session) => {
@@ -73,7 +76,7 @@ export default function Roleplay() {
         </div>
       </div>
 
-      <form className="card" onSubmit={handleSend} style={{ display: 'flex', gap: 10 }}>
+      <form className="card" onSubmit={handleSend} style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <input
           style={{ flex: 1 }}
           value={draft}
@@ -82,13 +85,17 @@ export default function Roleplay() {
           disabled={sending}
         />
         <button className="btn primary" type="submit" disabled={sending}>
+          {sending && <span className="spinner" />}
           {sending ? 'Mengirim...' : 'Kirim'}
         </button>
+        {showSendHint && <p className="slow-hint" style={{ width: '100%', margin: 0 }}>AI sedang menyusun balasan, mohon tunggu sebentar...</p>}
       </form>
 
       <button className="btn" onClick={handleComplete} disabled={completing || messages.length < 2}>
+        {completing && <span className="spinner" />}
         {completing ? 'Menilai percakapan...' : 'Selesaikan & Lihat Penilaian'}
       </button>
+      {showCompleteHint && <p className="slow-hint">AI sedang menilai seluruh percakapan, ini butuh waktu sedikit lebih lama...</p>}
     </div>
   );
 }

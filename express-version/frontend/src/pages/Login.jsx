@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSlowHint } from '../hooks/useSlowHint';
 
 export default function Login() {
   const { user, login } = useAuth();
@@ -8,6 +9,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const showSlowHint = useSlowHint(busy);
 
   if (user) return <Navigate to="/" replace />;
 
@@ -41,8 +43,14 @@ export default function Login() {
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
           <button className="btn primary" type="submit" disabled={busy}>
+            {busy && <span className="spinner" />}
             {busy ? 'Memproses...' : 'Login'}
           </button>
+          {showSlowHint && (
+            <p className="slow-hint">
+              Server sedang bangun dari mode idle — bisa makan waktu 10–15 detik pada percobaan pertama. Mohon tunggu, jangan klik ulang.
+            </p>
+          )}
         </form>
       </div>
     </div>
