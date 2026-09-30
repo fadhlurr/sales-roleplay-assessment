@@ -35,6 +35,7 @@ async function create(req, res, next) {
     try {
       opening = await generateCustomerReply(scenario, []);
     } catch (err) {
+      console.error('generateCustomerReply gagal:', err);
       // Session tetap tersimpan meski AI gagal di awal — tidak kehilangan
       // data, user bisa retry lewat endpoint messages.
       return res.status(502).json({
@@ -83,6 +84,7 @@ async function sendMessage(req, res, next) {
     try {
       reply = await generateCustomerReply(session.Scenario, [...history, userMessage]);
     } catch (err) {
+      console.error('generateCustomerReply gagal:', err);
       // Pesan user tetap tersimpan walau AI gagal merespons — memenuhi NFR
       // reliability: error API tidak boleh menghilangkan data session.
       return res.status(502).json({
@@ -127,6 +129,7 @@ async function complete(req, res, next) {
     try {
       result = await generateAssessment(session.Scenario, transcript);
     } catch (err) {
+      console.error('generateAssessment gagal:', err);
       // Session tetap ditandai selesai dan transcript tetap tersimpan; hanya
       // assessment yang belum ada. Frontend bisa menawarkan retry generate.
       return res.status(502).json({
