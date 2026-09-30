@@ -4,7 +4,7 @@ const { sequelize, User, Scenario, RoleplaySession, Message, Assessment } = requ
 
 const SCENARIOS = [
   {
-    name: 'Cold Call — Perkenalan Produk SaaS',
+    name: 'Cold Call — Perkenalan Produk',
     type: 'cold_call',
     description: 'Menelepon calon pelanggan yang belum pernah dihubungi sebelumnya untuk memperkenalkan produk.',
     instruction: 'Kamu adalah manajer operasional yang sedang sibuk dan belum kenal produk ini sama sekali. Jawab telepon dengan sedikit waspada, beri kesempatan sales menjelaskan tujuan telepon.',
