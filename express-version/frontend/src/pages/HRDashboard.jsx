@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
+import { downloadCsv } from '../utils/csv';
 
 export default function HRDashboard() {
   const { token } = useAuth();
@@ -27,11 +28,22 @@ export default function HRDashboard() {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
+  function exportCsv() {
+    downloadCsv(
+      'laporan-kandidat.csv',
+      ['Nama', 'Email', 'Sesi', 'Skor Rata-rata', 'Skor Terakhir', 'Status'],
+      data.candidates.map((c) => [c.name, c.email, c.totalSessions, c.averageScore ?? '', c.latestScore ?? '', c.status])
+    );
+  }
+
   return (
     <div className="container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Dashboard HR</h1>
-        <button className="btn primary" onClick={() => navigate('/hr/candidates/new')}>+ Tambah Kandidat</button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className="btn" onClick={exportCsv}>Export CSV</button>
+          <button className="btn primary" onClick={() => navigate('/hr/candidates/new')}>+ Tambah Kandidat</button>
+        </div>
       </div>
 
       <div className="grid cols-3">

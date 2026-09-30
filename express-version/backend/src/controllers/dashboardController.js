@@ -38,8 +38,33 @@ function summarizeUser(user) {
       startedAt: s.startedAt,
       completedAt: s.completedAt,
       overallScore: s.Assessment?.overallScore ?? null,
+      communicationScore: s.Assessment?.communicationScore ?? null,
+      pitchScore: s.Assessment?.pitchScore ?? null,
+      objectionScore: s.Assessment?.objectionScore ?? null,
+      confidenceScore: s.Assessment?.confidenceScore ?? null,
+      closingScore: s.Assessment?.closingScore ?? null,
     })),
   };
+}
+
+const CATEGORY_FIELDS = [
+  { key: 'communication', field: 'communicationScore', label: 'Komunikasi' },
+  { key: 'pitch', field: 'pitchScore', label: 'Pitch' },
+  { key: 'objection', field: 'objectionScore', label: 'Objection Handling' },
+  { key: 'confidence', field: 'confidenceScore', label: 'Kepercayaan Diri' },
+  { key: 'closing', field: 'closingScore', label: 'Closing' },
+];
+
+function categoryAverages(salesUsers) {
+  const sessions = salesUsers.flatMap((u) => u.sessions).filter((s) => s.overallScore != null);
+  const averages = CATEGORY_FIELDS.map(({ key, field, label }) => {
+    const values = sessions.map((s) => s[field]).filter((v) => v != null);
+    const avg = values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : null;
+    return { key, label, average: avg };
+  });
+  const withScores = averages.filter((a) => a.average != null);
+  const weakest = withScores.length ? withScores.reduce((a, b) => (b.average < a.average ? b : a)) : null;
+  return { averages, weakest: weakest?.key ?? null };
 }
 
 // GET /api/dashboard/hr?scenarioType=&minScore=&status=
@@ -118,11 +143,14 @@ async function managerDashboard(req, res, next) {
     const salesUsers = await usersWithSessions('sales');
     const allScores = salesUsers.flatMap((u) => u.sessions.map((s) => s.overallScore).filter((v) => v != null));
     const avg = allScores.length ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : null;
+    const { averages, weakest } = categoryAverages(salesUsers);
 
     res.json({
       totalSales: salesUsers.length,
       totalSessions: salesUsers.reduce((sum, u) => sum + u.totalSessions, 0),
       averageScore: avg,
+      categoryAverages: averages,
+      weakestCategory: weakest,
       salesUsers,
     });
   } catch (err) {
