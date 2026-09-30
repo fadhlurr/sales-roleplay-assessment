@@ -2,14 +2,6 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const DEMO_ACCOUNTS = [
-  ['candidate@roleplay.test', 'Candidate'],
-  ['sales@roleplay.test', 'Sales/Trainee'],
-  ['hr@roleplay.test', 'HR/Recruiter'],
-  ['manager@roleplay.test', 'Manager/Trainer'],
-  ['admin@roleplay.test', 'Admin'],
-];
-
 export default function Login() {
   const { user, login } = useAuth();
   const [email, setEmail] = useState('');
@@ -52,23 +44,6 @@ export default function Login() {
             {busy ? 'Memproses...' : 'Login'}
           </button>
         </form>
-      </div>
-
-      <div className="card">
-        <h2>Akun demo (password: password123)</h2>
-        {DEMO_ACCOUNTS.map(([demoEmail, label]) => (
-          <div key={demoEmail} style={{ marginBottom: 6 }}>
-            <button
-              className="btn"
-              style={{ width: '100%', justifyContent: 'space-between' }}
-              onClick={() => { setEmail(demoEmail); setPassword('password123'); }}
-              type="button"
-            >
-              <span>{label}</span>
-              <span className="muted">{demoEmail}</span>
-            </button>
-          </div>
-        ))}
       </div>
     </div>
   );
